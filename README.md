@@ -20,19 +20,22 @@ Baseline attribute-inference benchmark for the GMU CYSE 492/493 Group 32 project
 - Reports accuracy, macro precision/recall/F1, and confidence measures (mean confidence,
   expected calibration error, accuracy when confidence ≥ 0.9)
 
-## Getting the data
+## The data
 
-The data is **not** stored in this repo. Download it from the official source:
+The data is included in the [`data/`](data/) folder:
 
-https://archive.ics.uci.edu/dataset/2/adult
+- **Just want to look at it?** Open [`data/adult.csv`](data/adult.csv). GitHub shows it as a
+  searchable table (48,842 rows, with column names).
+- The original UCI files are in [`data/original/`](data/original/).
+- See [`data/DATA_NOTE.md`](data/DATA_NOTE.md) for the source, license, and how the CSV was made.
 
-Unzip `adult.zip` into `data/adult/`, so you have `data/adult/adult.data` and `data/adult/adult.test`.
+Official source: https://archive.ics.uci.edu/dataset/2/adult
 
 ## Running it
 
 ```bash
 pip install pandas scikit-learn
-python3 inspect_adult.py data/adult results/
+python3 inspect_adult.py data/original results/
 ```
 
 Results are printed and saved to `results/adult_inspection.json`.
