@@ -1,26 +1,15 @@
-# About this data
+# About the data
 
-**Source:** UCI Machine Learning Repository, "Adult" dataset
+This is the "Adult" dataset from the UCI Machine Learning Repository:
 https://archive.ics.uci.edu/dataset/2/adult
 
-**Citation (required by the CC BY 4.0 license):**
-Becker, B. & Kohavi, R. (1996). Adult [Dataset]. UCI Machine Learning Repository.
-https://doi.org/10.24432/C5XW20
+It's under a CC BY 4.0 license, so if you use it, cite it like this:
 
-**License:** Creative Commons Attribution 4.0 International (CC BY 4.0)
+Becker, B. & Kohavi, R. (1996). Adult [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5XW20
 
-## Important
-
-This is **real, de-identified 1994 U.S. Census data**. In this project it is used
-**only as an external benchmark** to validate the baseline profiling method. It is
-**not** part of the project's synthetic persona dataset, and it must not be mixed
-into it.
+**Reminder:** this is real 1994 Census data (de-identified). We're only using it as a benchmark to test our baseline. Don't add it to the synthetic persona dataset.
 
 ## Files
 
-- `adult.csv`: all 48,842 records (train + test combined) with column names added.
-  The `split` column shows which original file each row came from. Missing values
-  are kept as `?`, as in the original. The trailing "." on test-set income labels
-  was removed so both sets use the same labels.
-- `original/`: UCI's untouched files (`adult.data`, `adult.test`, `adult.names`),
-  for verification against the official source.
+- `adult.csv` - all 48,842 rows (train and test combined) with column names. The `split` column tells you which original file a row came from. Missing values are still `?` like in the original. I also removed the extra "." at the end of the income labels in the test file so both sets match.
+- `original/` - the untouched files from UCI, in case you want to check them against the official download.

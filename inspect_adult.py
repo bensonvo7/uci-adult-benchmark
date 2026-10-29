@@ -1,4 +1,5 @@
-"""UCI Adult dataset inspection + quick attribute-inference baseline.
+"""Goes through the UCI Adult dataset and runs a quick baseline test
+(hide one attribute, try to guess it from the rest).
 Usage: python3 -I inspect_adult.py <data_dir> <out_dir>
 """
 import sys, json, os
@@ -47,10 +48,10 @@ R["pct_zero"] = {c: round(float((df[c] == 0).mean()), 4) for c in ["capital_gain
 R["categorical_cardinality"] = {c: int(df[c].nunique()) for c in cat}
 R["top_values"] = {c: df[c].value_counts(normalize=True).head(5).round(4).to_dict() for c in cat}
 
-# education vs education_num redundancy
+# check if education_num is just education as a number
 R["education_num_redundant"] = bool(df.groupby("education")["education_num"].nunique().max() == 1)
 
-# Pairwise mutual information between categorical attributes (normalized), top pairs
+# which columns are most tied to each other (normalized mutual info)
 binned = df.copy()
 binned["age_bin"] = pd.cut(df["age"], [0, 25, 35, 45, 55, 65, 120]).astype(str)
 binned["hours_bin"] = pd.cut(df["hours_per_week"], [0, 30, 40, 50, 100]).astype(str)
@@ -69,7 +70,7 @@ for i, a in enumerate(mi_cols):
 pairs.sort(key=lambda x: -x[2])
 R["top_attribute_dependencies_nmi"] = pairs[:12]
 
-# Quasi-identifier uniqueness (relevant to identity resolution / re-identification risk)
+# how many people get singled out by combining a few attributes
 qi_sets = {
     "age+sex+race": ["age", "sex", "race"],
     "age+sex+race+native_country": ["age", "sex", "race", "native_country"],
@@ -85,8 +86,8 @@ for name, cols in qi_sets.items():
                 "num_groups": int(len(sizes))}
 R["quasi_identifier_uniqueness"] = qi
 
-# ---------------- Baseline attribute inference ----------------
-# Adversary sees "public-profile-like" attributes, tries to infer a hidden one.
+# ---------------- Baseline test ----------------
+# the profiler sees most of a person's info and tries to guess the hidden attribute
 def run_task(target, drop_extra=()):
     d = df.dropna(subset=[target]).copy()
     feats = [c for c in COLS if c not in (target, "fnlwgt", "education_num") + tuple(drop_extra)]
@@ -118,7 +119,7 @@ def run_task(target, drop_extra=()):
             proba = m.predict_proba(Xte)
             conf = proba.max(axis=1)
             correct = (p == yte.values)
-            # Expected calibration error (10 bins) as an "analyst confidence" measure
+            # calibration error: does the confidence match how often it's actually right?
             bins = np.linspace(0, 1, 11); ece = 0.0
             for lo, hi in zip(bins[:-1], bins[1:]):
                 mask = (conf > lo) & (conf <= hi)
